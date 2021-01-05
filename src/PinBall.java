@@ -28,8 +28,10 @@ public class PinBall {
 }
 
 class Panel4GameBoard extends JPanel implements ActionListener, MouseListener {
+    private Ball ball;
     private final List<Ball> ballList;
     private final Timer timer;
+    private int pressedPosX, pressedPosY, currentPosX, currentPosY;
 
     // 再描画タイミング
     private static final int INTERVAL = 50;
@@ -52,6 +54,8 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener {
         for (Ball ball: ballList) {
             ball.draw(graphics);
         }
+        if (ball != null)
+            ball.draw(graphics);
     }
 
     @Override
@@ -64,21 +68,27 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            Random random = new Random();
-            ballList.add(new Ball(10, e.getX(), e.getY(), 30, 20,
-                    new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this));
-        }
+
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            pressedPosX = e.getX();
+            pressedPosY = e.getY();
+            Random random = new Random();
+            ball = new Ball(10, e.getX(), e.getY(), 0, 0,
+                    new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this);
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            ball.setVxVy(pressedPosX - e.getX(), pressedPosY - e.getY());
+            ballList.add(ball);
+            ball = null;
+        }
     }
 
     @Override
