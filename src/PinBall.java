@@ -1,15 +1,16 @@
 import java.awt.Graphics;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
 
 public class PinBall {
     public static void main(String[] args) {
@@ -64,8 +65,9 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
-            System.out.println("button2 clicked");
-            ballList.add(new Ball(this));
+            Random random = new Random();
+            ballList.add(new Ball(10, e.getX(), e.getY(), 30, 20,
+                    new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this));
         }
     }
 
