@@ -84,7 +84,8 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
             Random random = new Random();
             int n = 10;
             for (int i = 0; i < n; i++) {
-                ballList.add(new Ball(10, pressedPosX, pressedPosY, random.nextInt(30) - 15, -10,
+                ballList.add(new Ball(10, pressedPosX, pressedPosY,
+                        random.nextInt(30) - 15, random.nextInt(15) - 15,
                         new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this));
             }
         } else if (e.getButton() == MouseEvent.BUTTON3) {
