@@ -120,11 +120,12 @@ public class Ball {
         // 画面下向きの加速度
         vy = vy + g;
 
-        if (y == height - r) { //床についている状態で200 回更新したら
+        // ボール削除フラグに関する処理
+        if (y == height - r) { // 床についている状態で200 回更新したら
             endCount++;
             if (endCount > 200) {
                 end = true;
             }
-        } else endCount = 0; //床から離れればリセット
+        } else endCount = 0; // 床から離れればリセット
     }    
 }
