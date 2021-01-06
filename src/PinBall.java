@@ -32,7 +32,7 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
     private Ball ball;
     private final List<Ball> ballList;
     private final Timer timer;
-    private int pressedPosX, pressedPosY, currentPosX = -1, currentPosY = -1;
+    private int pressedPosX, pressedPosY, currentPosX, currentPosY;
 
     // 再描画タイミング
     private static final int INTERVAL = 16;
@@ -75,6 +75,11 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
                 i--;
             }
         }
+
+        if (ball != null) {
+            if (pressedPosX == currentPosX && pressedPosY == currentPosY) ball.setR(ball.getR() * 1.02);
+        }
+
         repaint();
     }
 
@@ -89,18 +94,12 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
         if (e.getButton() == MouseEvent.BUTTON1) {
             pressedPosX = e.getX();
             pressedPosY = e.getY();
-            Random random = new Random();
-            int n = 10;
-            for (int i = 0; i < n; i++) {
-                ballList.add(new Ball(10, pressedPosX, pressedPosY,
-                        random.nextInt(30) - 15, random.nextInt(15) - 15,
-                        new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this));
-            }
+            randomBalls(pressedPosX, pressedPosY);
         }
         // 右クリックで好きな方向、速度でボールを撃ち出せる
         else if (e.getButton() == MouseEvent.BUTTON3) {
-            pressedPosX = e.getX();
-            pressedPosY = e.getY();
+            pressedPosX = currentPosX = e.getX();
+            pressedPosY = currentPosY = e.getY();
             Random random = new Random();
             ball = new Ball(10, e.getX(), e.getY(), 0, 0, // ball を null でなくすることで発射準備開始
                     new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this);
@@ -130,5 +129,15 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
     @Override
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+    public void randomBalls(double posX, double posY) {
+        Random random = new Random();
+        int n = 10;
+        for (int i = 0; i < n; i++) {
+            ballList.add(new Ball(10, pressedPosX, pressedPosY,
+                    random.nextInt(30) - 15, random.nextInt(15) - 15,
+                    new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this));
+        }
     }
 }
