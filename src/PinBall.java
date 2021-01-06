@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -27,20 +28,21 @@ public class PinBall {
     }
 }
 
-class Panel4GameBoard extends JPanel implements ActionListener, MouseListener {
+class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, MouseMotionListener {
     private Ball ball;
     private final List<Ball> ballList;
     private final Timer timer;
-    private int pressedPosX, pressedPosY, currentPosX, currentPosY;
+    private int pressedPosX, pressedPosY, currentPosX = -1, currentPosY = -1;
 
     // 再描画タイミング
-    private static final int INTERVAL = 50;
+    private static final int INTERVAL = 16;
 
     public Panel4GameBoard() {
         timer = new Timer(INTERVAL, this);
         ballList = new ArrayList<Ball>();
         ballList.add(new Ball(this));
         addMouseListener(this);
+        addMouseMotionListener(this);
     }
 
     public void animationStart() {
@@ -56,6 +58,9 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener {
         }
         if (ball != null)
             ball.draw(graphics);
+        if (currentPosX != -1 && currentPosY != -1)
+            graphics.drawLine(pressedPosX, pressedPosY, currentPosX, currentPosY);
+
     }
 
     @Override
@@ -73,7 +78,16 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            pressedPosX = e.getX();
+            pressedPosY = e.getY();
+            Random random = new Random();
+            int n = 10;
+            for (int i = 0; i < n; i++) {
+                ballList.add(new Ball(10, pressedPosX, pressedPosY, random.nextInt(30) - 15, -10,
+                        new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this));
+            }
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
             pressedPosX = e.getX();
             pressedPosY = e.getY();
             Random random = new Random();
@@ -85,19 +99,25 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener {
     @Override
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3) {
-            ball.setVxVy(pressedPosX - e.getX(), pressedPosY - e.getY());
+            ball.setVxVy(0.1 * (pressedPosX - e.getX()), 0.1 * (pressedPosY - e.getY()));
             ballList.add(ball);
-            ball = null;
         }
+        ball = null;
+        currentPosX = currentPosY = -1;
+    }
+    @Override
+    public void mouseEntered(MouseEvent e) { }
+    @Override
+    public void mouseExited(MouseEvent e) { }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        currentPosX = e.getX();
+        currentPosY = e.getY();
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseMoved(MouseEvent e) {
 
     }
 }
