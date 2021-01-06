@@ -24,8 +24,11 @@ public class Ball {
     // 反発係数
     private double e = 0.8;
 
+    private int endCount = 0;
+    private boolean end = false;
+
     // ボールを描画するパネル
-    private JPanel panel;
+    private final JPanel panel;
 
     public Ball(JPanel panel) {
         this.panel = panel;
@@ -50,6 +53,10 @@ public class Ball {
 
     public double getVx() { return vx; }
     public double getVy() { return vy; }
+
+    public boolean getEnd() {
+        return end;
+    }
 
     // setter
     public void setR(double r) { this.r = r; }
@@ -112,5 +119,12 @@ public class Ball {
 
         // 画面下向きの加速度
         vy = vy + g;
+
+        if (y == height - r) { //床についている状態で200 回更新したら
+            endCount++;
+            if (endCount > 200) {
+                end = true;
+            }
+        } else endCount = 0; //床から離れればリセット
     }    
 }

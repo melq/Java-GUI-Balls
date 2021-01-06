@@ -56,17 +56,24 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
         for (Ball ball: ballList) {
             ball.draw(graphics);
         }
-        if (ball != null)
+        if (ball != null) {//発射準備中のボールがあれば
             ball.draw(graphics);
-        if (currentPosX != -1 && currentPosY != -1)
             graphics.drawLine(pressedPosX, pressedPosY, currentPosX, currentPosY);
+        }
 
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        for (Ball ball: ballList) {
+        for (Ball ball: ballList) { //各ボールをの next メソッドを呼ぶ
             ball.next();
+        }
+
+        for (int i = 0; i < ballList.size(); i++) { //削除フラグチェック、削除
+            if (ballList.get(i).getEnd()) {
+                ballList.remove(i);
+                i--;
+            }
         }
         repaint();
     }
@@ -78,7 +85,7 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON1) { //左クリックでランダムに n 個のボールを飛ばす
             pressedPosX = e.getX();
             pressedPosY = e.getY();
             Random random = new Random();
@@ -88,23 +95,23 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
                         random.nextInt(30) - 15, random.nextInt(15) - 15,
                         new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this));
             }
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
+        }
+        else if (e.getButton() == MouseEvent.BUTTON3) { //右クリックで好きな方向、速度でボールを撃ち出せる
             pressedPosX = e.getX();
             pressedPosY = e.getY();
             Random random = new Random();
-            ball = new Ball(10, e.getX(), e.getY(), 0, 0,
+            ball = new Ball(10, e.getX(), e.getY(), 0, 0, //ball を null でなくすることで発射準備開始
                     new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this);
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            ball.setVxVy(0.1 * (pressedPosX - e.getX()), 0.1 * (pressedPosY - e.getY()));
+        if (e.getButton() == MouseEvent.BUTTON3) { //右クリックを離したとき、ボールを発射
+            ball.setVxVy(0.2 * (pressedPosX - e.getX()), 0.2 * (pressedPosY - e.getY()));
             ballList.add(ball);
         }
-        ball = null;
-        currentPosX = currentPosY = -1;
+        ball = null; //発射準備状態を終わる
     }
     @Override
     public void mouseEntered(MouseEvent e) { }
