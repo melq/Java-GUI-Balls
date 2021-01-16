@@ -30,7 +30,7 @@ public class PinBall {
 
 class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, MouseMotionListener {
     private Ball ball;
-    private final List<Ball> ballList;
+    private final List<Ball> ballList, particleList;
     private final Timer timer;
     private int pressedPosX, pressedPosY, currentPosX, currentPosY;
 
@@ -43,6 +43,7 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
     public Panel4GameBoard() {
         timer = new Timer(INTERVAL, this);
         ballList = new ArrayList<Ball>();
+        particleList = new ArrayList<Ball>();
         ballList.add(new Ball(this));
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -59,6 +60,9 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
         for (Ball ball: ballList) {
             ball.draw(graphics);
         }
+        for (Ball ball: particleList) {
+            ball.draw(graphics);
+        }
 
         // 発射しようとしているボールと線分の描画
         if (ball != null) { // 発射準備中のボールがあれば
@@ -69,14 +73,22 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        for (Ball ball: ballList) { // 各ボールをの next メソッドを呼ぶ
+        for (Ball ball: ballList) // 各ボールをの next メソッドを呼ぶ
             ball.next();
-        }
+        for (Ball ball: particleList)
+            ball.next();
 
         // ボールの削除
         for (int i = 0; i < ballList.size(); i++) { // 削除フラグチェック、削除
             if (ballList.get(i).getEnd()) {
+                randomBalls(particleList, ballList.get(i).getX(), ballList.get(i).getY(), 5, 7);
                 ballList.remove(i);
+                i--;
+            }
+        }
+        for (int i = 0; i < particleList.size(); i++) {
+            if (particleList.get(i).getEnd()) {
+                particleList.remove(i);
                 i--;
             }
         }
@@ -84,7 +96,7 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
         // 左クリック長押しでボールを出し続ける
         if (isLeftPressed) {
             if (leftPressCount % 7 == 0)
-                randomBalls(currentPosX, currentPosY, 1);
+                randomBalls(ballList, currentPosX, currentPosY, 10, 1);
             leftPressCount++;
         }
 
@@ -92,14 +104,11 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
         if (ball != null) {
             if (pressedPosX == currentPosX && pressedPosY == currentPosY) ball.setR(ball.getR() * 1.02);
         }
-
         repaint();
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
+    public void mouseClicked(MouseEvent e) { }
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -109,7 +118,7 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
         // 左クリックでランダムに n 個のボールを飛ばす
         if (e.getButton() == MouseEvent.BUTTON1) {
             isLeftPressed = true;
-            randomBalls(pressedPosX, pressedPosY, 10);
+            randomBalls(ballList, pressedPosX, pressedPosY, 10, 10);
         }
         // 右クリックで好きな方向、速度でボールを撃ち出せる
         else if (e.getButton() == MouseEvent.BUTTON3) {
@@ -149,10 +158,10 @@ class Panel4GameBoard extends JPanel implements ActionListener, MouseListener, M
     }
 
     // ランダムに n 個のボールを作る
-    public void randomBalls(double posX, double posY, int n) {
+    public void randomBalls(List<Ball> ballList, double posX, double posY, double r, int n) {
         Random random = new Random();
         for (int i = 0; i < n; i++) {
-            ballList.add(new Ball(10, posX, posY,
+            ballList.add(new Ball(r, posX, posY,
                     random.nextInt(30) - 15, random.nextInt(15) - 15,
                     new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256)), this));
         }
