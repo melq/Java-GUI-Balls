@@ -1,3 +1,5 @@
+/*プログラミング言語IV レポート課題 t180d510 都筑 律玖*/
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -25,6 +27,7 @@ public class Ball {
     private double e = 0.8;
 
     private int endCount = 0;
+    private int maxEndCount = 200;
     private boolean end = false;
 
     // ボールを描画するパネル
@@ -34,13 +37,14 @@ public class Ball {
         this.panel = panel;
     }
 
-    public Ball(double r, double x, double y, double vx, double vy, Color color, JPanel panel) {
+    public Ball(double r, double x, double y, double vx, double vy, Color color, int maxEndCount, JPanel panel) {
         this.r = r;
         this.x = x;
         this.y = y;
         this.vx = vx;
         this.vy = vy;
         this.color = color;
+        this.maxEndCount = maxEndCount;
         this.panel = panel;
     }
 
@@ -72,6 +76,9 @@ public class Ball {
     public void setG(double g) { this.g = g; }
     public void setE(double e) { this.e = e; }
     public void setColor(Color color) { this.color = color; }
+
+    public void setMaxEndCount(int maxEndCount) { this.maxEndCount = maxEndCount; }
+    public void setEnd(boolean end) { this.end = end; }
 
     // ボールを描画
     public void draw(Graphics graphics) {
@@ -123,9 +130,9 @@ public class Ball {
         // ボール削除フラグに関する処理
         if (y == height - r) { // 床についている状態で200 回更新したら
             endCount++;
-            if (endCount > 200) {
+            if (endCount > maxEndCount) {
                 end = true;
             }
         } else endCount = 0; // 床から離れればリセット
-    }    
+    }
 }
